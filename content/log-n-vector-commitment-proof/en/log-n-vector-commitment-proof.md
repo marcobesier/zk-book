@@ -29,7 +29,7 @@ If we recursively apply this algorithm, we get the $\log n$ algorithm described 
 
 However, we could also interpret this procedure as us proving we know the opening to the commitment $P'$ where $P'=(Lu^2+P+Ru^{-2})$ with respect to the basis vector $\mathsf{fold}(\mathbf{G},u^{-1})$ of length $n'=n/2$. We could naïvely prove we know the opening of $P'$ by sending $\mathbf{a}'$ and the verifier checking that $P'\stackrel{?}=\langle\mathbf{a'},\mathsf{fold}(\mathbf{G},u^{-1})\rangle$.
 
-But rather than proving we know the opening to $P'$ by sending $\mathbf{a}'$, we can recursively apply the algorithm to prove we know the opening to $P'$ by sending a vector $\mathbf{a}''$ of size $n/4$. In fact, we can keep recursing until $a^{\prime\dots\prime}$ is of size $n=1$.
+But rather than proving we know the opening to $P'$ by sending $\mathbf{a}'$, we can recursively apply the algorithm to prove we know the opening to $P'$ by sending a vector $\mathbf{a}{\prime\prime}$ of size $n/4$. In fact, we can keep recursing until $a^{\prime\dots\prime}$ is of size $n=1$.
 
 The animation below provides an intuition of what is happening. The next section describes the animation in detail.
 
@@ -53,27 +53,21 @@ In the algorithm description below $n$ is the length of the vectors in the input
 
 ##### Case 2: $n > 1$
 1. The prover computes and sends to the verifier $(L, R)$ where
-
 $$\begin{align*}
 L &= a_1G_2 + a_3G_4 + \dots a_{n-1}G_n\\
 R &= a_2G_1 + a_4G_3 + \dots a_nG_{n-1}
 \end{align*}
 $$
-
 2. The verifier sends randomness $u$
-
 3. The prover and verifier both compute:
-
 $$
 \begin{align*}
 \mathbf{G}'&=\mathsf{fold}(\mathbf{G},u^{-1})\\
 P' &= Lu^2+P+Ru^{-2}
 \end{align*}
 $$
-
 4. The prover computes
 $$\mathbf{a}'=\mathsf{fold}(\mathbf{a},u)$$
-
 5. $\texttt{prove_commitments_log}(P', \mathbf{G}', \mathbf{a}')$
 
 ### Commentary on the algorithm
@@ -88,7 +82,7 @@ However, recall that our motivation for this algorithm is to reduce the size of 
 In fact, we have not shown how to prove we know the inner product with logarithmic-sized data, we have only shown that we know the opening to a commitment with a logarithmic-sized data. However, it is straightforward to update our algorithm to show we know the inner product of two vectors, as we will do later in this article.
 
 #### Runtime
-The verifier carries out the computation $\mathbf{G}' = \mathsf{fold}(\mathbf{G}, u^{-1})$ $\log n$ times, and the first $\mathsf{fold}$ takes $\mathcal{O}(n)$ time. At first glance, it seems that the verifier's runtime is $\mathcal{O}(n \log n)$, however we should observe that $n$ gets cut in half on each iteration, so the actual runtime is $n + \frac{n}{2} + \frac{n}{4} + ... + 1 = 2n$ so the actual runtime of the verifier is $\mathcal{O}(n)$.
+The verifier carries out the computation $\mathbf{G}' = \mathsf{fold}(\mathbf{G}, u^{-1})$ $\log n$ times, and the first $\mathsf{fold}$ takes $\mathcal{O}(n)$ time. At first glance, it seems that the verifier's runtime is $\mathcal{O}(n \log n)$. However, notice that with each iteration, $n$ is halved, resulting in a runtime or $n + \frac{n}{2} + \frac{n}{4} + ... + 1 = 2n$, leading to an overall runtime for the verifier of $\mathcal{O}(n)$.
 
 ## Proving we know the inner product $\langle\mathbf{a},\mathbf{b}\rangle=v$
 
@@ -98,13 +92,13 @@ Specifically, we must prove that $P$ holds a commitment to the inner product $\l
 
 However, we cannot simply re-use our previous algorithm because the prover can provide multiple openings to $P$. For example, if $\mathbf{a} = [1,2]$ and $\mathbf{b} = [3,4]$, the prover can open also open with vectors $\mathbf{a}' = [3,2]$ and $\mathbf{b}' = [1, 4]$.
 
-To create a *secure* proof of knowledge of an inner product, the prover must also compute and send a commitment $\mathbf{a}$ and $\mathbf{b}$.
+To create a *secure* proof of knowledge of an inner product, the prover must also compute and send a commitment for $\mathbf{a}$ and $\mathbf{b}$.
 
-The naive solution is to run the commitment algorithm twice. The first to times are to prove $\mathbf{a}$ and $\mathbf{b}$ are properly committed to $P_1 = \langle\mathbf{a},\mathbf{G}\rangle$ and $P_2 =\langle\mathbf{b},\mathbf{H}\rangle$ and a third time, to show that $\langle\mathbf{a},\mathbf{b}\rangle Q=P_3$ was properly computed. In the next section, we show how to modify our algorithm to computes the inner product when both vectors are field elements.
+The naive solution is to run the commitment algorithm twice. The first two times are to prove $\mathbf{a}$ and $\mathbf{b}$ are properly committed to $P_1 = \langle\mathbf{a},\mathbf{G}\rangle$ and $P_2 =\langle\mathbf{b},\mathbf{H}\rangle$ and the third time is to show that $\langle\mathbf{a},\mathbf{b}\rangle Q=P_3$ was properly computed. In the next section, we show how to modify our algorithm to compute the inner product when both vectors are field elements.
 
 ### Converting a scalar inner product to a scalar-point inner product
 
-Let $\mathbf{Q}^n$ be the vector $Q$ repeated $n$ times, i.e.
+Let $\mathbf{Q}^n$ be the vector consisting of $n$ copies of the point $Q$, i.e.
 
 $$\mathbf{Q}^n=[\underbrace{Q,\dots, Q}_n]$$
 
@@ -149,21 +143,17 @@ Given $v = \langle\mathbf{a},\mathbf{b}\rangle$ and commitment $P = vQ+\langle\m
 #### $\texttt{prove_commitments_log}(P, \mathbf{G}, \mathbf{H},Q, |\mathbf{a}, \mathbf{b})$
 ##### Case 1: $n = 1$
 
-1. The prover sends $(a,b)$ and the verifier checks that $P \stackrel{?}= aG + bH + abQ$ the algorithm ends.
+1. The prover sends $(a,b)$ and the verifier checks that $P \stackrel{?}= aG + bH + abQ$. The algorithm ends.
 
 ##### Case 2: $n > 1$
 1. The prover computes and sends to the verifier $(L, R)$ which are simply the off-diagonal terms of all the vectors concatenated together (see the animation above):
-
 $$\begin{align*}
 L &= (a_1b_2 + a_3b_4 + \dots a_{n-1}b_n)Q+(a_1G_2 + a_3G_4 + \dots a_{n-1}G_n)+(b_2H_1 + b_4H_3 + \dots b_nH_{n-1})\\
 R &= (a_2b_1 + a_4b_3 + \dots a_nb_{n-1})Q+(a_2G_1 + a_4G_3 + \dots a_nG_{n-1})+(b_1G_2 + b_3G_4 + \dots b_{n-1}G_n)
 \end{align*}
 $$
-
-2. The verifier sends randomness $u$
-
+2. The verifier sends randomness $u$.
 3. The prover and verifier both compute:
-
 $$
 \begin{align*}
 P' &= Lu^2+P+Ru^{-2}\\
@@ -171,15 +161,13 @@ P' &= Lu^2+P+Ru^{-2}\\
 \mathbf{H}'&=\mathsf{fold}(\mathbf{H}, u^{-1})\\\\
 \end{align*}
 $$
-
-4. The prover computes
+4. The prover computes:
 $$
 \begin{align*}
 \mathbf{a}'&=\mathsf{fold}(\mathbf{a},u)\\
 \mathbf{b}'&=\mathsf{fold}(\mathbf{b},u^{-1})
 \end{align*}
 $$
-
 5. $\texttt{prove_commitments_log}(P', G', H', \mathbf{a}', \mathbf{b}')$
 
 The following exercises can be found in our [ZK Bulletproofs GitHub Repo](https://github.com/RareSkills/ZK-bulletproofs/tree/main):
@@ -239,7 +227,7 @@ assert len(Gprimeprime) == 1 and len(aprimeprime) == 1, "final vector must be le
 assert eq(vector_commit(Gprimeprime, aprimeprime), add_points(multiply(L2, pow(u2, 2, p)), multiply(L1, pow(u1, 2, p)), P, multiply(R1, pow(u1, -2, p)), multiply(R2, pow(u2, -2, p)))), "invalid proof"
 ```
 
-**Exercise 2:** Modify the code above to implement the algorithm that proves $P$ holds a commitment to $\mathbf{a}$, $\mathbf{b}$ and $v$, and that $\langle\mathbf{a},\mathbf{b}\rangle=v$. Use the following basis vector for $\mathbf{H}$ and EC point $Q$
+**Exercise 2:** Modify the code above to implement the algorithm that proves $P$ holds a commitment to $\mathbf{a}$, $\mathbf{b}$ and $v$, and that $\langle\mathbf{a},\mathbf{b}\rangle=v$. Use the following basis vector for $\mathbf{H}$ and EC point $Q$:
 
 ```python
 H = [(FQ(13728162449721098615672844430261112538072166300311022796820929618959450231493), FQ(12153831869428634344429877091952509453770659237731690203490954547715195222919)),

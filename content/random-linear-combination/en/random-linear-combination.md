@@ -1,6 +1,6 @@
 # Reducing the number of equality checks (constraints) through random linear combinations
 
-Random linear combination are a common trick in zero knowledge proof algorithms to enable $m$ equality checks to be probabilistically checked with a single equality check. Suppose we have $m$ inner products we are trying to prove. Instead of creating $m$ proofs, we create a random linear combination of the equalities and prove that.
+Random linear combinations are a common trick in zero knowledge proof algorithms to enable $m$ equality checks to be probabilistically checked with a single equality check. Suppose we have $m$ inner products we are trying to prove. Instead of creating $m$ proofs, we create a random linear combination of the equalities and prove that.
 
 ## Equality of Pedersen Commitments
 First, let's consider how we might prove the equality of multiple Pedersen commitments.
@@ -87,7 +87,7 @@ However, this requires the verifier to send $m$ elements, leading to a linear co
 $L_1 + L_2z_1 + L_3z^2 + ... L_mz^{m-1} \stackrel{?}{=}R_1+R_2z+R_3z^2\dots+R_mz^{m-1} + \pi B$
 
 ### Security analysis
-The left-hand-side and right-hand-side are both polynomials of degree $m$. If they are unequal to each other, then they intersect in at most $m$ points by the [Schwartz Zippel Lemma](https://www.rareskills.io/post/schwartz-zippel-lemma). If $m\ll p$ where $p$ is the order of the finite field, then again the probability of $z$ being an intersection point is negligible.
+The left-hand side and right-hand side are both polynomials of degree $m$. If they are unequal to each other, then they intersect in at most $m$ points by the [Schwartz Zippel Lemma](https://www.rareskills.io/post/schwartz-zippel-lemma). If $m\ll p$ where $p$ is the order of the finite field, then again the probability of $z$ being an intersection point is negligible.
 
 ## Random linear combinations of inner products
 
@@ -101,7 +101,7 @@ Because the two inner products share a common term, it is algebraically possible
 
 $\langle\mathbf{a}_L, \mathbf{a}_R + \mathbf{a}_W\rangle = v_1 + v_2$
 
-However, this is not secure from a soundness perspective because it is possible because that $\langle \mathbf{a}_L, \mathbf{a}_R\rangle \neq v_1$ and $\langle \mathbf{a}_L, \mathbf{a}_W\rangle\neq v_2$ but $\langle\mathbf{a}_L, \mathbf{a}_R + \mathbf{a}_W\rangle = v_1 + v_2$.
+However, this is not secure from a soundness perspective because it is possible that $\langle \mathbf{a}_L, \mathbf{a}_R\rangle \neq v_1$ and $\langle \mathbf{a}_L, \mathbf{a}_W\rangle\neq v_2$ but $\langle\mathbf{a}_L, \mathbf{a}_R + \mathbf{a}_W\rangle = v_1 + v_2$.
 
 As expected, we can solve this by using a random linear combination.
 

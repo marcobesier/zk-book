@@ -34,7 +34,7 @@ a_1\\a_2\\a_3
 \end{matrix}
 $$
 
-In other words, multiplying an $n \times m$ matrix by an $n$ dimensional vector is the same as computing $n$ inner products. So if we can directly prove an inner product was computed correctly, then we don't need the additional steps of creating a Quadratic Arithmetic Program.
+In other words, multiplying an $n \times m$ matrix by an $m$ dimensional vector is the same as computing $n$ inner products. So if we can directly prove an inner product was computed correctly, then we don't need the additional steps of creating a Quadratic Arithmetic Program.
 
 Furthermore, Bulletproofs do not use [pairings](https://www.rareskills.io/post/bilinear-pairing) (only basic [elliptic curve addition](https://www.rareskills.io/post/elliptic-curve-addition)) and do not require a [trusted setup](https://www.rareskills.io/post/trusted-setup).
 
@@ -80,8 +80,11 @@ Chapter 2 introduces the Pedersen Commitment, which is the foundational building
 4. [Zero Knowledge Multiplication](https://www.rareskills.io/post/zk-multiplication) We can verify that two polynomials were multiplied together correctly by 1) committing them, 2) evaluating them, and 3) checking that the evaluations of the first two multiply to the third. By having a scheme for multiplying polynomials together (with zero knowledge), we also get scalar multiplication for free.
 5. [Inner Product Arguments](https://www.rareskills.io/post/inner-product-argument) Now that we have the mechanism to do zero knowledge proofs for multiplication, it is only a small change to support zero knowledge proofs for the inner product. Specifically, we change the scalar coefficient polynomials to "vector polynomials" and do vector commitments instead of scalar commitments for the coefficients. We also define an operation of "vector polynomial inner product" that enables us to accomplish the inner product argument. While zero knowledge, this argument is not yet succinct.
 6. [Succinct Inner Product Arguments](https://www.rareskills.io/post/outer-product-inner-product) Normally, to prove you correctly computed an inner product with two vectors of length $n$, you would need to send $2n$ elements (i.e. both of the vectors). This chapter shows a clever trick for only sending $n$ elements.
-
-(to be continued!)
+7. [Logarithmic-Sized Proofs of Knowledge for Inner Products](https://www.rareskills.io/post/log-n-vector-commitment-proof) This chapter uses the algorithm described in chapter 6 recursively to prove we correctly computed an inner product of two vectors of size $n$ with a proof size of only $\mathcal{O}(n)$ data.
+8. [Bulletproof ZKP: the algorithm end-to-end](https://www.rareskills.io/post/bulletproofs-zkp) We combine the zero knowledge inner product argument in chapter 5 with the succint inner product in chapter 7 to produce the Bulletproof. At this point, you have sufficient knowledge to code the algorithm yourself by combining the previous exercises.
+9. [Inner Product Algebra](https://www.rareskills.io/post/inner-product-algebra) This chapter introduces and proves various algebraic identities for adding inner products together, which will be useful when learning the Bulletproof range proof.
+10. [Random Linear Combinations](https://www.rareskills.io/post/random-linear-combination) Instead of creating two proofs (or more) for two (or more) inner products, we can create one proof for multiple inner products by using the random linear combination trick.
+11. [Range Proofs](https://www.rareskills.io/post/range-proof) A range proof is proof that a committed value lies in a certain range. Bulletproofs can accomplish this directly, without the need to arithmetize the problem. Bulletproofs range proofs prove that a number can be encoded as the inner product of a vector of powers of 2 $[1,2,4,...,2^{n-1}]$ and a binary vector, but they don't reveal which bits are one or zero.
 
 We recommend that you fork [this Bulletproofs ZK repo](https://github.com/RareSkills/ZK-bulletproofs) and do the exercises as you read, so that you can immediately practice what you learn.
 
